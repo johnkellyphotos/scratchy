@@ -1,6 +1,6 @@
 <?php
 
-namespace component;
+namespace Scratchy\component;
 
 use elements\Element;
 use Scratchy\TagType;

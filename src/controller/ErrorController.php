@@ -15,6 +15,7 @@ class ErrorController extends Controller
 {
     public function __construct()
     {
+        parent::__construct();
         $this->responseCode = INTERNAL_SERVER_ERROR_CODE;
     }
 

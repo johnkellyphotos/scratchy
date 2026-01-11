@@ -1,12 +1,12 @@
 <?php
 
-namespace component;
+namespace Scratchy\component;
 
-use elements\div;
-use elements\Element;
-use elements\input;
-use elements\label;
-use InputType;
+use Scratchy\InputType;
+use Scratchy\elements\div;
+use Scratchy\elements\Element;
+use Scratchy\elements\input;
+use Scratchy\elements\label;
 use Scratchy\TagType;
 
 class TextInput extends Element
@@ -19,15 +19,23 @@ class TextInput extends Element
         private ?array  $attributes = [],
     )
     {
+        $inputName = null;
+
+        if (isset($attributes['name'])) {
+            $inputName = $attributes['name'];
+            unset($attributes['name']);
+        }
+
         $this->classes = ['form-outline', 'mb-4', ...$this->classes];
         parent::__construct(TagType::div, $this->id, $this->classes);
 
         $id = $this->createId();
 
         $input = new input(
+            name: $inputName,
             id: $id,
             classes: ['form-control', 'border'],
-            attributes: [...$this->attributes, 'type' => InputType::text->value],
+            attributes: [...$this->attributes, 'type' => InputType::text->value,],
         );
 
         $label = new label(

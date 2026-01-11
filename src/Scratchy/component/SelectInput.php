@@ -1,12 +1,12 @@
 <?php
 
-namespace component;
+namespace Scratchy\component;
 
-use elements\div;
-use elements\Element;
-use elements\label;
-use elements\option;
-use elements\select;
+use Scratchy\elements\div;
+use Scratchy\elements\Element;
+use Scratchy\elements\label;
+use Scratchy\elements\option;
+use Scratchy\elements\select;
 use Scratchy\TagType;
 
 class SelectInput extends Element
@@ -20,12 +20,20 @@ class SelectInput extends Element
         private ?array  $attributes = [],
     )
     {
+        $inputName = null;
+
+        if (isset($attributes['name'])) {
+            $inputName = $attributes['name'];
+            unset($attributes['name']);
+        }
+
         $this->classes = ['form-outline', 'mb-4', ...$this->classes];
         parent::__construct(TagType::div, $this->id, $this->classes, $this->attributes);
 
         $id = $this->createId();
 
         $select = new select(
+            name: $inputName,
             id: $id,
             classes: ['form-control', 'border'],
         );

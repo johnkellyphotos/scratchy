@@ -51,16 +51,16 @@ class Element
             $indent = _INDENT_ === true;
         }
 
-        $tag = htmlspecialchars($this->tagType->value, ENT_QUOTES, 'UTF-8');
+        $tag = _($this->tagType->value);
         $html = "<$tag";
 
         if ($this->id !== null) {
-            $id = htmlspecialchars($this->id, ENT_QUOTES, 'UTF-8');
+            $id = _($this->id);
             $html .= " id=\"$id\"";
         }
 
         if ($this->classes !== []) {
-            $safe = array_map(fn($c) => htmlspecialchars($c, ENT_QUOTES, 'UTF-8'), $this->classes);
+            $safe = array_map(fn($c) => _($c), $this->classes);
             $classList = implode(' ', $safe);
             $html .= " class=\"$classList\"";
         }
@@ -68,12 +68,12 @@ class Element
         if ($this->attributes !== []) {
             foreach ($this->attributes as $name => $value) {
                 if (is_int($name)) {
-                    $v = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                    $v = _($value);
                     $html .= " $v";
                 } else {
                     if ($name !== "id" && $name !== "class") {
-                        $n = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-                        $v = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                        $n = _($name);
+                        $v = _($value);
                         $html .= " $n=\"$v\"";
                     }
                 }
@@ -87,7 +87,7 @@ class Element
                 if ($this instanceof script) {
                     $html .= $this->content;
                 } else {
-                    $html .= htmlspecialchars($this->content, ENT_QUOTES, 'UTF-8');
+                    $html .= _($this->content);
                 }
             }
 
