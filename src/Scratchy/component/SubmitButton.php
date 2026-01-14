@@ -2,7 +2,7 @@
 
 namespace Scratchy\component;
 
-use elements\Element;
+use Scratchy\elements\Element;
 use Scratchy\TagType;
 
 class SubmitButton extends Element
