@@ -63,11 +63,10 @@ class NavigationMenu extends element
             ['label' => 'Home', 'href' => '/', 'icon' => ['fa-solid', 'fa-house']],
             ['label' => 'Missing page', 'href' => '/this-url-does-not-exist/', 'icon' => ['fa-solid', 'fa-newspaper']],
             [
-                'label' => 'Drop down menu',
+                'label' => 'Tools',
                 'icon' => ['fa-solid', 'fa-user'],
                 'children' => [
-                    ['label' => 'Profile', 'href' => '/account/profile/'],
-                    ['label' => 'Settings', 'href' => '/account/settings/'],
+                    ['label' => 'Database', 'href' => '/Database/'],
                 ],
             ],
             ['label' => 'Error', 'href' => '/error/throw-an-error/', 'icon' => ['fa-solid', 'fa-circle-info']],
