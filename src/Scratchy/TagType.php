@@ -9,6 +9,7 @@ enum TagType: string
     case html = 'html';
     case form = 'form';
     case label = 'label';
+    case b = 'b';
     case i = 'i';
     case option = 'option';
     case input = 'input';
