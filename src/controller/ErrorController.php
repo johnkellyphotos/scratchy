@@ -7,6 +7,7 @@ use Exception;
 use Scratchy\component\PageContent;
 use Scratchy\elements\Element;
 use Scratchy\elements\h1;
+use Scratchy\elements\h2;
 use Scratchy\elements\li;
 use Scratchy\elements\ol;
 use Throwable;
@@ -22,7 +23,15 @@ class ErrorController extends Controller
     public function index(?string $message = null, ?Throwable $exception = null): ?Element
     {
         $message ??= "We experienced an error loading this page.";
-        $PageContents = new PageContent(new h1(content: $message));
+        $messageDetails = null;
+        if ($exception)
+        {
+            $messageDetails = "{$exception->getFile()} on line {$exception->getLine()}";
+        }
+        $PageContents = new PageContent(
+            new h1(content: $message),
+            new h2(content: $messageDetails)
+        );
         if ($exception) {
             $ol = new ol();
             foreach ($exception->getTrace() as $error) {
