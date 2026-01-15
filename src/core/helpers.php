@@ -1,8 +1,6 @@
 <?php
 
-namespace core\helpers;
-
-function _(string $value): string
+function c(string $value): string
 {
     return htmlspecialchars(
         $value,

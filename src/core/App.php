@@ -2,6 +2,7 @@
 
 namespace core;
 
+require "helpers.php";
 use Throwable;
 
 readonly class App

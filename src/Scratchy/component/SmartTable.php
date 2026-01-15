@@ -28,7 +28,7 @@ class SmartTable extends Element
         $tr = new tr();
         $tableHeader->append($tr);
         foreach ($tableColumnNames as $tableColumnName) {
-            $tr->append(new th(content: __($tableColumnName)));
+            $tr->append(new th(content: c($tableColumnName)));
         }
 
         $tbody = new tbody();
