@@ -67,6 +67,7 @@ class NavigationMenu extends element
                 'icon' => ['fa-solid', 'fa-user'],
                 'children' => [
                     ['label' => 'Database', 'href' => '/Database/'],
+                    ['label' => 'View users', 'href' => '/Database/view-users/'],
                 ],
             ],
             ['label' => 'Error', 'href' => '/error/throw-an-error/', 'icon' => ['fa-solid', 'fa-circle-info']],
