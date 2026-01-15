@@ -9,6 +9,7 @@ use Scratchy\elements\Element;
 use Scratchy\elements\h1;
 use Scratchy\elements\h2;
 
+/** @noinspection PhpUnused */
 class HomeController extends Controller
 {
     public function __construct()
@@ -16,6 +17,7 @@ class HomeController extends Controller
         parent::__construct();
     }
 
+    /** @noinspection PhpUnused */
     public function index(): ?Element
     {
         return new PageContent(
