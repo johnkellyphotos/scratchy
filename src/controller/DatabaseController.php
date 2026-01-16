@@ -3,6 +3,7 @@
 namespace controller;
 
 use core\Controller;
+use core\RowActionType;
 use model\UserModel;
 use Scratchy\component\PageContent;
 use Scratchy\component\SmartTable;
@@ -22,7 +23,10 @@ class DatabaseController extends Controller
     public function viewUsers(): ?Element
     {
         $users = UserModel::findAll();
-        $table = new SmartTable($users);
+        $table = new SmartTable($users, [
+            RowActionType::EDIT,
+            RowActionType::DELETE,
+        ]);
         return new PageContent($table);
     }
 
