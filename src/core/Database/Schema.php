@@ -67,7 +67,7 @@ final class Schema
         $models = [];
 
         $it = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(__DIR__ . '/../../model')
+            new RecursiveDirectoryIterator(MODEL_DIRECTORY)
         );
 
         foreach ($it as $file) {
