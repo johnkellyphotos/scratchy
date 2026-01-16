@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace core;
+namespace core\Database;
 
 final class DatabaseColumn
 {

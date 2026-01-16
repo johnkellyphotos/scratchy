@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace core;
+namespace core\Database;
 
 use BackedEnum;
 use InvalidArgumentException;
@@ -67,7 +67,7 @@ final class Schema
         $models = [];
 
         $it = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(__DIR__ . '/../model')
+            new RecursiveDirectoryIterator(__DIR__ . '/../../model')
         );
 
         foreach ($it as $file) {

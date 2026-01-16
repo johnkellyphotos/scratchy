@@ -2,9 +2,9 @@
 
 namespace model;
 
-use core\DatabaseColumn;
-use core\DatabaseColumnType;
-use core\Model;
+use core\Database\DatabaseColumn;
+use core\Database\DatabaseColumnType;
+use core\Database\Model;
 
 final class UserModel extends Model
 {

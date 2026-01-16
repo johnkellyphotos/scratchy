@@ -2,8 +2,8 @@
 
 namespace view\DatabaseController;
 
-use core\Schema;
-use core\SchemaComparator;
+use core\Database\Schema;
+use core\Database\SchemaComparator;
 use Scratchy\component\PageContent;
 use Scratchy\elements\button;
 use Scratchy\elements\div;

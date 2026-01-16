@@ -1,8 +1,9 @@
 <?php
 
-namespace core;
+namespace core\Database;
 
 use PDO;
+
 abstract class Model extends Database
 {
     private static bool $initialized = false;
