@@ -28,7 +28,7 @@ class Controller
 
     private function createDefaultTitle(): string
     {
-        return _(APP_NAME);
+        return c(APP_NAME);
     }
 
     public function setAction(string $action): void
