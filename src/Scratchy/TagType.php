@@ -10,12 +10,14 @@ enum TagType: string
     case form = 'form';
     case label = 'label';
     case b = 'b';
+    case strong = 'strong';
     case i = 'i';
     case option = 'option';
     case input = 'input';
     case select = 'select';
     case script = 'script';
     case p = 'p';
+    case dl = 'dl';
     case span = 'span';
     case link = 'link';
     case style = 'style';

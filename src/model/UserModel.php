@@ -8,7 +8,7 @@ use core\Database\Model;
 
 final class UserModel extends Model
 {
-    public ?int $id = null;
+    // should be lowerCamelCase of column name
     public ?string $username = null;
     public ?string $password = null;
     public ?string $created = null;
@@ -17,17 +17,13 @@ final class UserModel extends Model
     public static function define(): array
     {
         // return an array of type DatabaseColumn for each property you want in the database.
+        // `id` and `label` is required for every table, and will be added automatically if not specified here.
         return [
-            new DatabaseColumn(
-                name: 'id',
-                type: DatabaseColumnType::INT,
-                isPrimaryKey: true,
-                autoIncrement: true
-            ),
             new DatabaseColumn(
                 name: 'username',
                 type: DatabaseColumnType::VARCHAR_64,
-                unique: true
+                unique: true,
+                isLabel: true,
             ),
             new DatabaseColumn(
                 name: 'password',
@@ -39,7 +35,7 @@ final class UserModel extends Model
                 default: 'CURRENT_TIMESTAMP'
             ),
             new DatabaseColumn(
-                name: 'last_sign_in',
+                name: 'lastSignIn',
                 type: DatabaseColumnType::DATETIME,
                 nullable: true,
             ),

@@ -36,6 +36,12 @@ class WebPage extends Element
         $script = new script(src: 'https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.umd.min.js');
         $this->append($script);
 
+        $script = new script(src: '/scripts/modal.js');
+        $this->append($script);
+
+        $script = new script(src: '/scripts/row-action.js');
+        $this->append($script);
+
         $script = new script(content: <<<HTML
             console.log("test");
         HTML

@@ -19,6 +19,16 @@ class Request
 
     public function __construct(?array $server = null, ?array $get = null)
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $_SESSION['flash_post_data'] = $_POST;
+            header('Location: ' . $_SERVER['REQUEST_URI']);
+            exit;
+        }
+
         $server = $server ?? $_SERVER;
         $get = $get ?? $_GET;
 

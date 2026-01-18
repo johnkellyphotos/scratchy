@@ -11,6 +11,8 @@ class Controller
     public readonly Data $data;
     protected int $responseCode = OKAY_STATUS_CODE;
 
+    protected ?string $webPageTemplate = WebPage::class;
+
     public function __construct()
     {
         $this->data = new Data();
@@ -19,9 +21,9 @@ class Controller
     public function output(...$arguments): void
     {
         $actionResult = $this->{$this->action}(...$arguments);
-        $webPage = new WebPage($actionResult ?? []);
+        $webPage = new $this->webPageTemplate($actionResult ?? []);
 
-        $webPage->title->innerHtml($this->title ?? $this->createDefaultTitle());
+        $webPage?->title?->innerHtml($this->title ?? $this->createDefaultTitle());
         http_response_code($this->responseCode);
         $webPage->output();
     }

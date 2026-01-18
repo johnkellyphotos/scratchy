@@ -59,11 +59,23 @@ abstract class Database
         return $stmt->rowCount();
     }
 
+    protected static function delete(string $sql, array $params = []): int
+    {
+        return self::exec($sql, $params);
+    }
+
     protected static function insert(string $sql, array $params = []): string
     {
         $stmt = self::pdo()->prepare($sql);
         $stmt->execute($params);
         return self::pdo()->lastInsertId();
+    }
+
+    protected static function update(string $sql, array $params = []): bool
+    {
+        $stmt = self::pdo()->prepare($sql);
+        $stmt->execute($params);
+        return true;
     }
 
     /**
@@ -74,22 +86,16 @@ abstract class Database
         $pdo = self::pdo();
         $pdo->beginTransaction();
 
-        try
-        {
-            foreach ($listOfQueries as $query)
-            {
+        try {
+            foreach ($listOfQueries as $query) {
                 $pdo->exec($query);
             }
 
-            if ($pdo->inTransaction())
-            {
+            if ($pdo->inTransaction()) {
                 $pdo->commit();
             }
-        }
-        catch (Throwable $e)
-        {
-            if ($pdo->inTransaction())
-            {
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
             throw $e;

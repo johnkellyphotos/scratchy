@@ -15,6 +15,32 @@ use Throwable;
 
 final class Schema
 {
+    public static function getDefinition(string $model): array
+    {
+        $columns = $model::define();
+
+        $addIdColumn = $addLabelColumn = true;
+
+        foreach ($columns as $column) {
+            if ($column instanceof DatabaseColumnId) {
+                $addIdColumn = false;
+            }
+            if ($column instanceof DatabaseColumnLabel) {
+                $addLabelColumn = false;
+            }
+        }
+
+        if ($addLabelColumn) {
+            $columns = [new DatabaseColumnLabel(), ...$columns];
+        }
+
+        if ($addIdColumn) {
+            $columns = [new DatabaseColumnId(), ...$columns];
+        }
+
+        return $columns;
+    }
+
     /**
      * @throws ReflectionException
      * returns SchemaComparator[]
@@ -24,7 +50,7 @@ final class Schema
         $differences = [];
         $models = self::getModels();
         foreach ($models as $model) {
-            $columns = $model::define();
+            $columns = self::getDefinition($model);
             $table = $model::table();
             $difference = Schema::compare($model::pdo(), $table, $columns);
             if ($difference->hasChanges()) {
@@ -43,7 +69,7 @@ final class Schema
         $models = self::getModels();
         $sqlToExecute = [];
         foreach ($models as $model) {
-            $columns = $model::define();
+            $columns = self::getDefinition($model);
             $table = $model::table();
 
             $schemaComparator = Schema::compare($model::pdo(), $table, $columns);
@@ -99,8 +125,9 @@ final class Schema
         $wantCols = [];
         foreach ($columns as $c) {
             if (!$c instanceof DatabaseColumn) {
-                throw new InvalidArgumentException("columns must be DatabaseColumn[]");
+                throw new InvalidArgumentException("columns must be array of DatabaseColumn");
             }
+
             $wantCols[$c->name] = $c;
         }
 
@@ -292,7 +319,7 @@ final class Schema
 
     private static function columnSql(DatabaseColumn $c): string
     {
-        $sql = "`$c->name` " . self::typeSql($c);
+        $sql = "`{$c->name}` " . self::typeSql($c);
 
         if (!$c->nullable) {
             $sql .= " NOT NULL";

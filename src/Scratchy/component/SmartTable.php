@@ -16,7 +16,7 @@ class SmartTable extends Element
 {
     public function __construct(array $tableRows, array $actions = [])
     {
-        parent::__construct(tagType: TagType::table, classes: ['table', 'table-striped', 'table-hover']);
+        parent::__construct(tagType: TagType::table, classes: ['table', 'table-striped', 'table-hover', 'mt-1', 'mb-1']);
 
         $firstEntry = $tableRows[0] ?? null;
         if (!$firstEntry) {
@@ -39,7 +39,10 @@ class SmartTable extends Element
         $tr = new tr();
         $tableHeader->append($tr);
         foreach ($tableColumnNames as $tableColumnName) {
-            $tr->append(new th(content: c($tableColumnName)));
+            if ($tableColumnName === 'id') {
+                continue;
+            }
+            $tr->append(new th(content: c(ucfirst($tableColumnName))));
         }
 
         $tbody = new tbody();
@@ -49,11 +52,29 @@ class SmartTable extends Element
             if (count($rowActions)) {
                 $td = new td();
                 foreach ($rowActions as $rowAction) {
-                    $td->append(new button(classes: ['btn', 'btn-secondary'], attributes: ['style' => 'font-size: 1.3rem; padding: 0.25rem;', 'title' => $rowAction->label], content: $rowAction->icon));
+                    $modelName = substr($tableRow::class, strrpos($tableRow::class, '\\') + 1);
+
+                    $td->append(new button(
+                        classes: [
+                            'btn',
+                            'btn-secondary'
+                        ],
+                        attributes: [
+                            'style' => 'font-size: 1.3rem; padding: 0.25rem;',
+                            'title' => $rowAction->label,
+                            'data-app-row-action' => $rowAction->action(),
+                            'data-app-model' => $modelName,
+                            'data-app-id' => $tableRow?->id,
+                        ],
+                        content: $rowAction->icon
+                    ));
                 }
                 $tr->append($td);
             }
-            foreach ($tableRow as $tableCell) {
+            foreach ($tableRow as $key => $tableCell) {
+                if ($key === 'id') {
+                    continue;
+                }
                 $tr->append(new td(content: $tableCell));
             }
             $tbody->append($tr);

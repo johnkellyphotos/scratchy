@@ -4,6 +4,7 @@ namespace core;
 
 enum RowActionType: string
 {
-    case EDIT = 'Edit';
     case DELETE = 'Delete';
+    case EDIT = 'Edit';
+    case VIEW = 'View';
 }

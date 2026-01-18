@@ -11,8 +11,9 @@ readonly class Data
     public function __construct()
     {
         $this->get = $this->normalizeArray($_GET);
-        $this->post = $this->normalizeArray($_POST);
+        $this->post = $this->normalizeArray($_SESSION['flash_post_data'] ?? []);
         $this->files = $_FILES;
+        unset($_SESSION['flash_post_data']);
     }
 
     public function get(?string $key = null, mixed $default = null): mixed
@@ -27,7 +28,7 @@ readonly class Data
 
     public function file(?string $key = null, mixed $default = null): mixed
     {
-        return !is_null($key) ? ($this->file[$key] ?? $default) : $this->file;
+        return !is_null($key) ? ($this->file[$key] ?? $default) : $this->files;
     }
 
     private function normalizeArray(array $data): array
@@ -90,7 +91,7 @@ readonly class Data
             }
         }
 
-        // floating point numbers and scientific notiation
+        // floating point numbers and scientific notation
         if (preg_match('/^[+-]?(?:\d+\.\d*|\d*\.\d+)(?:[eE][+-]?\d+)?$/', $s) === 1
             || preg_match('/^[+-]?\d+(?:[eE][+-]?\d+)$/', $s) === 1) {
             return (float)$s;

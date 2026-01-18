@@ -2,6 +2,7 @@
 
 namespace core\Database;
 
+use Exception;
 use PDO;
 
 abstract class Model extends Database
@@ -9,8 +10,10 @@ abstract class Model extends Database
     private static bool $initialized = false;
     protected static string $table;
     protected static string $primaryKey = 'id';
+    private static array $columnLabel = [];
 
-    protected ?int $id = null;
+    public ?int $id = null;
+    public ?string $label = null;
 
     public function __construct(?int $id = null)
     {
@@ -80,6 +83,30 @@ abstract class Model extends Database
         return $modelList;
     }
 
+    public function label(): string
+    {
+        return c($this->label);
+    }
+
+    public static function fromId(int $id): ?static
+    {
+        self::initiate();
+        $table = static::$table;
+
+        $result = self::one("SELECT * FROM $table WHERE id=?;", [$id]);
+
+        if ($result) {
+            $modelName = static::class;
+            $model = new $modelName();
+            foreach (get_object_vars($model) as $column => $value) {
+                $model->{$column} = $result[$column];
+            }
+            return $model;
+        }
+
+        return null;
+    }
+
     public static function findOne(?string $where = null, array $parameters = []): ?static
     {
         self::initiate();
@@ -102,6 +129,41 @@ abstract class Model extends Database
         return null;
     }
 
+    public static function getFieldUsedAsLabel(): string
+    {
+        $model = static::class;
+        if (isset(self::$columnLabel[$model])) {
+            return self::$columnLabel[$model];
+        }
+
+        $columns = $model::define();
+        foreach ($columns as $column) {
+            if ($column->isLabel()) {
+                self::$columnLabel[$model] = $column->name;
+            }
+        }
+
+        self::$columnLabel[$model] ??= 'id';
+
+        return self::$columnLabel[$model];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function remove(): bool
+    {
+        self::initiate();
+
+        if (empty($this->id)) {
+            throw new Exception('Record does not have ID field set so may not be deleted.');
+        }
+
+        $table = static::$table;
+
+        return self::delete("DELETE FROM $table WHERE id=? LIMIT 1;", [$this->id]) > 0;
+    }
+
     public function create(): string
     {
         self::initiate();
@@ -110,8 +172,18 @@ abstract class Model extends Database
         $placeHolders = [];
         $data = [];
 
+        if (!isset($this->label)) {
+            $fieldToUseAsLabel = self::getFieldUsedAsLabel();
+            $this->label = $this->{$fieldToUseAsLabel} ?? null;
+        }
+
+        $needToUpdateId = false;
+
         foreach (get_object_vars($this) as $column => $value) {
             if ($value === null) {
+                if ($column === 'id' && $this->label === null) {
+                    $needToUpdateId = true;
+                }
                 continue;
             }
 
@@ -128,6 +200,12 @@ abstract class Model extends Database
         $sql = "INSERT INTO $table ($columnSql) VALUES ($placeHolderSql)";
         $id = self::insert($sql, $data);
         $this->id = $id;
+
+        if ($needToUpdateId) {
+            $this->label = $id;
+            self::update("Update $table SET label = :label WHERE id = :id LIMIT 1", ['label' => $this->label, 'id' => $id]);
+        }
+
         return $id;
     }
 }
