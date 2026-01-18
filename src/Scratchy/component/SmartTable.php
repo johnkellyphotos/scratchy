@@ -54,7 +54,7 @@ class SmartTable extends Element
                 foreach ($rowActions as $rowAction) {
                     $modelName = substr($tableRow::class, strrpos($tableRow::class, '\\') + 1);
 
-                    $td->append(new button(
+                    $button = new button(
                         classes: [
                             'btn',
                             'btn-secondary'
@@ -67,7 +67,9 @@ class SmartTable extends Element
                             'data-app-id' => $tableRow?->id,
                         ],
                         content: $rowAction->icon
-                    ));
+                    );
+                    $button->cleanOutput(false); // so the icon can render as HTML
+                    $td->append($button);
                 }
                 $tr->append($td);
             }

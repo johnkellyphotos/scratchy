@@ -11,6 +11,7 @@ class Element
      */
     protected array $childElements = [];
     protected int $depth = 0;
+    private bool $cleanOutput = true;
 
     public function __construct(
         private TagType $tagType,
@@ -23,6 +24,11 @@ class Element
     {
         $this->classes ??= [];
         $this->attributes ??= [];
+    }
+
+    public function cleanOutput($status = true): void
+    {
+        $this->cleanOutput = $status;
     }
 
     public function append(Element $element): void
@@ -84,7 +90,7 @@ class Element
             $html .= ">";
 
             if ($this->content !== null) {
-                if ($this instanceof script) {
+                if ($this instanceof script || !$this->cleanOutput) {
                     $html .= $this->content;
                 } else {
                     $html .= c($this->content);
