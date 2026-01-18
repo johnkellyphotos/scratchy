@@ -19,7 +19,7 @@ class ModalButton extends Element
 
         $class = match ($ModalButtonType) {
             ModalButtonType::OKAY => 'btn btn-primary',
-            ModalButtonType::YES, => 'btn-success',
+            ModalButtonType::YES, ModalButtonType::SAVE => 'btn-success',
             ModalButtonType::NO, ModalButtonType::CANCEL => 'btn-danger',
             default => $class,
         };

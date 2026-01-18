@@ -4,6 +4,7 @@ namespace core\Database;
 
 use Exception;
 use PDO;
+use Scratchy\InputType;
 
 abstract class Model extends Database
 {
@@ -12,8 +13,10 @@ abstract class Model extends Database
     protected static string $primaryKey = 'id';
     private static array $columnLabel = [];
 
-    public ?int $id = null;
+    public readonly ?int $id;
     public ?string $label = null;
+
+    private static array $dataBaseColumns = [];
 
     public function __construct(?int $id = null)
     {
@@ -61,6 +64,22 @@ abstract class Model extends Database
         );
     }
 
+    public static function getInputTypeForColumn(string $name): InputType
+    {
+        $model = static::class;
+        if (isset(self::$dataBaseColumns[$model][$name])) {
+            return self::$dataBaseColumns[$model][$name];
+        }
+
+        $databaseColumns = $model::define();
+        foreach ($databaseColumns as $column) {
+            if ($column->name === $name) {
+                self::$dataBaseColumns[$model][$name] = $column->input;
+            }
+        }
+        return self::$dataBaseColumns[$model][$name] ?? InputType::none;
+    }
+
     public static function findAll(?string $where = null, array $parameters = []): array
     {
         self::initiate();
@@ -75,7 +94,8 @@ abstract class Model extends Database
         foreach ($results as $result) {
             $modelName = static::class;
             $model = new $modelName();
-            foreach (get_object_vars($model) as $column => $value) {
+            $columns = ['id' => null, ...get_object_vars($model)];
+            foreach ($columns as $column => $value) {
                 $model->{$column} = $result[$column];
             }
             $modelList[] = $model;
@@ -98,7 +118,8 @@ abstract class Model extends Database
         if ($result) {
             $modelName = static::class;
             $model = new $modelName();
-            foreach (get_object_vars($model) as $column => $value) {
+            $columns = ['id' => null, ...get_object_vars($model)];
+            foreach ($columns as $column => $value) {
                 $model->{$column} = $result[$column];
             }
             return $model;
@@ -120,7 +141,8 @@ abstract class Model extends Database
         if ($result) {
             $modelName = static::class;
             $model = new $modelName();
-            foreach (get_object_vars($model) as $column => $value) {
+            $columns = ['id' => null, ...get_object_vars($model)];
+            foreach ($columns as $column => $value) {
                 $model->{$column} = $result[$column];
             }
             return $model;
@@ -164,6 +186,43 @@ abstract class Model extends Database
         return self::delete("DELETE FROM $table WHERE id=? LIMIT 1;", [$this->id]) > 0;
     }
 
+
+    public function save(): bool
+    {
+        self::initiate();
+
+        $idToUpdate = $this->id;
+
+        // ensure label exists in object, but do not update label column in save()
+        $fieldToUseAsLabel = self::getFieldUsedAsLabel();
+        $this->label = $this->{$fieldToUseAsLabel} ?? null;
+
+        $sets = [];
+        $data = [':id' => $idToUpdate];
+
+        foreach (get_object_vars($this) as $column => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            if ($column === 'id') {
+                continue;
+            }
+
+            $sets[] = "{$column} = :{$column}";
+            $data[":{$column}"] = $value;
+        }
+
+        if (count($sets) === 0) {
+            return true;
+        }
+
+        $table = static::$table;
+        $setSql = implode(', ', $sets);
+
+        return self::update("UPDATE $table SET $setSql WHERE id = :id LIMIT 1", $data);
+    }
+
     public function create(): string
     {
         self::initiate();
@@ -178,8 +237,8 @@ abstract class Model extends Database
         }
 
         $needToUpdateId = false;
-
-        foreach (get_object_vars($this) as $column => $value) {
+        $columnList = ['id' => null, ...get_object_vars($this)];
+        foreach ($columnList as $column => $value) {
             if ($value === null) {
                 if ($column === 'id' && $this->label === null) {
                     $needToUpdateId = true;

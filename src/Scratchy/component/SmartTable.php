@@ -16,7 +16,7 @@ class SmartTable extends Element
 {
     public function __construct(array $tableRows, array $actions = [])
     {
-        parent::__construct(tagType: TagType::table, classes: ['table', 'table-striped', 'table-hover', 'mt-1', 'mb-1']);
+        parent::__construct(tagType: TagType::table, classes: ['table', 'table-striped', 'table-hover', 'mt-2', 'mb-2']);
 
         $firstEntry = $tableRows[0] ?? null;
         if (!$firstEntry) {

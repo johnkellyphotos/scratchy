@@ -15,7 +15,7 @@ class ViewRecord extends Element
 {
     public function __construct(Model $record)
     {
-        parent::__construct(tagType: TagType::div, classes: ['card']);
+        parent::__construct(tagType: TagType::div, classes: ['div']);
 
         $cardBody = new div(classes: ['card-body', 'p-2']);
         $this->append($cardBody);

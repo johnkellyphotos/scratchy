@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace core\Database;
 
+use Scratchy\InputType;
+
 class DatabaseColumn
 {
     public function __construct(
         public string             $name,
         public DatabaseColumnType $type,
+        public InputType          $input = InputType::none,
         public bool               $isPrimaryKey = false,
         public bool               $autoIncrement = false,
         public bool               $nullable = false,

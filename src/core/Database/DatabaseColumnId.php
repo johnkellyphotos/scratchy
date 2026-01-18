@@ -8,6 +8,6 @@ class DatabaseColumnId extends DatabaseColumn
 {
     public function __construct()
     {
-        parent::__construct('id', DatabaseColumnType::INT, true, true);
+        parent::__construct(name: 'id', type: DatabaseColumnType::INT, isPrimaryKey: true, autoIncrement: true);
     }
 }

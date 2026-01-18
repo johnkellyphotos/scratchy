@@ -5,11 +5,13 @@ namespace controller;
 use core\Controller;
 use Exception;
 use model\_Model;
+use Scratchy\component\EditRecord;
 use Scratchy\component\Modal\Modal;
 use Scratchy\component\Modal\ModalButtonType;
 use Scratchy\component\Modal\ModalContent;
 use Scratchy\component\ViewRecord;
 use Scratchy\elements\span;
+use Scratchy\InputType;
 use Throwable;
 
 /** @noinspection PhpUnused */
@@ -27,6 +29,7 @@ class ModalController extends Controller
         try {
             $modelName = $this->data->get('model');
             $id = $this->data->get('id');
+            $modalButtonAction = $this->data->post('modalButtonAction');
 
             $model = _Model::get($modelName);
             $record = $model::fromId($id);
@@ -35,13 +38,45 @@ class ModalController extends Controller
             }
 
             $modelDisplayName = _Model::displayNameFromModelName($model::class);
-            $title = "Edit $modelDisplayName record";
-            $content = "Edit the record for <b>{$record->label()}</b>.";
-        } catch (Throwable) {
-            $title = 'You are unable to edit this record';
-            $content = 'Either the record does not exist or you do not have permission to edit.';
+
+            switch ($modalButtonAction) {
+                case ModalButtonType::SAVE->value:
+                    $modalButtonList = [ModalButtonType::OKAY_AND_RELOAD];
+
+                    $fieldsToSave = $this->data->post('modalInputData');
+
+                    foreach ($fieldsToSave as $fieldNameToSave => $fieldValueToSave) {
+                        if ($fieldNameToSave === 'id') {
+                            continue;
+                        }
+                        $inputForField = $record::getInputTypeForColumn($fieldNameToSave);
+                        if ($inputForField === InputType::none) {
+                            throw new Exception('Attempting to edit non-editable field.');
+                        }
+                        $record->{$fieldNameToSave} = $fieldValueToSave ?: null;
+                    }
+
+                    $success = $record->save();
+                    if ($success) {
+                        $title = "The $modelDisplayName record for {$record->label()} was successfully updated.";
+                        $content = new span(content: "You may now close the modal.");
+                    } else {
+                        $title = "The $modelDisplayName record for {$record->label()} could not be updated.";
+                        $content = new span(content: "Refresh the page and try again.");
+                    }
+                    break;
+                default:
+                    $title = "Edit $modelDisplayName record for {$record->label()}";
+                    $content = new EditRecord($record);
+                    $modalButtonList = [ModalButtonType::CANCEL, ModalButtonType::SAVE];
+                    break;
+            }
+        } catch (Throwable $e) {
+            $title = $e->getMessage() ?? 'You are unable to edit this record';
+            $content = new span(content: 'Either the record does not exist or you do not have permission to edit.');
+            $modalButtonList = [ModalButtonType::CANCEL];
         }
-        return new ModalContent(title: $title, modalButtons: [ModalButtonType::CANCEL], elementList: new span(content: $content));
+        return new ModalContent(title: $title, modalButtons: $modalButtonList, elementList: $content);
     }
 
     public function viewRecord(): ModalContent
@@ -49,7 +84,6 @@ class ModalController extends Controller
         try {
             $modelName = $this->data->get('model');
             $id = $this->data->get('id');
-            $modalButtonAction = $this->data->get('modalButtonAction');
 
             $model = _Model::get($modelName);
             $record = $model::fromId($id);
@@ -76,7 +110,7 @@ class ModalController extends Controller
         try {
             $modelName = $this->data->get('model');
             $id = $this->data->get('id');
-            $modalButtonAction = $this->data->get('modalButtonAction');
+            $modalButtonAction = $this->data->post('modalButtonAction');
 
             $model = _Model::get($modelName);
             $record = $model::fromId($id);
