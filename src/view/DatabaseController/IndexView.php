@@ -14,7 +14,7 @@ use Scratchy\elements\li;
 use Scratchy\elements\ul;
 use Throwable;
 
-class indexView extends PageContent
+class IndexView extends PageContent
 {
     /**
      * @throws Throwable
