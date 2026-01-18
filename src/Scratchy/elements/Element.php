@@ -51,16 +51,16 @@ class Element
             $indent = _INDENT_ === true;
         }
 
-        $tag = _($this->tagType->value);
+        $tag = c($this->tagType->value);
         $html = "<$tag";
 
         if ($this->id !== null) {
-            $id = _($this->id);
+            $id = c($this->id);
             $html .= " id=\"$id\"";
         }
 
         if ($this->classes !== []) {
-            $safe = array_map(fn($c) => _($c), $this->classes);
+            $safe = array_map(fn($c) => c($c), $this->classes);
             $classList = implode(' ', $safe);
             $html .= " class=\"$classList\"";
         }
@@ -68,12 +68,12 @@ class Element
         if ($this->attributes !== []) {
             foreach ($this->attributes as $name => $value) {
                 if (is_int($name)) {
-                    $v = _($value);
+                    $v = c($value);
                     $html .= " $v";
                 } else {
                     if ($name !== "id" && $name !== "class") {
-                        $n = _($name);
-                        $v = _($value);
+                        $n = c($name);
+                        $v = c($value);
                         $html .= " $n=\"$v\"";
                     }
                 }
@@ -87,7 +87,7 @@ class Element
                 if ($this instanceof script) {
                     $html .= $this->content;
                 } else {
-                    $html .= _($this->content);
+                    $html .= c($this->content);
                 }
             }
 
