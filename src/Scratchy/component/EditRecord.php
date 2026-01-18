@@ -8,6 +8,7 @@ use Scratchy\elements\Element;
 use Scratchy\elements\input;
 use Scratchy\elements\label;
 use Scratchy\elements\button;
+use Scratchy\elements\textarea;
 use Scratchy\InputType;
 use Scratchy\TagType;
 
@@ -30,7 +31,7 @@ class EditRecord extends Element
             if ($key === 'id') {
                 $body->append(new input(
                     name: $key,
-                    value: (string)$value,
+                    value: c($value),
                     attributes: [
                         'type' => 'hidden',
                     ]
@@ -55,15 +56,27 @@ class EditRecord extends Element
                     content: c((string)$key)
                 ));
 
-                $group->append(new input(
-                    name: c($key),
-                    value: (string)($value ?? ''),
-                    id: $elementId,
-                    classes: ['form-control'],
-                    attributes: [
-                        'type' => $inputType->value,
-                    ]
-                ));
+                if ($inputType === InputType::textarea) {
+                    $group->append(new textarea(
+                        name: c($key),
+                        value: (string)($value ?? ''),
+                        id: $elementId,
+                        classes: ['form-control'],
+                        attributes: [
+                            'type' => $inputType->value,
+                        ]
+                    ));
+                } else {
+                    $group->append(new input(
+                        name: c($key),
+                        value: c($value ?? ''),
+                        id: $elementId,
+                        classes: ['form-control'],
+                        attributes: [
+                            'type' => $inputType->value,
+                        ]
+                    ));
+                }
 
                 $body->append($group);
             }

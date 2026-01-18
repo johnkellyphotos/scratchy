@@ -40,6 +40,7 @@ class IndexView extends PageContent
                         $buildButton = true;
                         $changes = "Database table `<b>$schemaDifference->table</b>` has differences from codebase.";
                         $li = new li(content: $changes);
+                        $li->cleanOutput(false);
                         $ul->append($li);
                         $innerUl = new ul();
                         $li->append($innerUl);
@@ -64,6 +65,7 @@ class IndexView extends PageContent
                                     }
                                 }
                                 $innerLi = new li(content: "The column$s $columns $isAre $message");
+                                $innerLi->cleanOutput(false);
                                 $innerUl->append($innerLi);
 
                             }
@@ -73,7 +75,9 @@ class IndexView extends PageContent
                         $subUl = new ul();
                         $subLi->append($subUl);
                         foreach ($schemaDifference->sql as $sql) {
-                            $subUl->append(new li(content: "<code>$sql</code>."));
+                            $codeLi = new li(content: "<code>$sql</code>.");
+                            $codeLi->cleanOutput(false);
+                            $subUl->append($codeLi);
                         }
                     }
                 }

@@ -16,6 +16,7 @@ class ModalController extends Controller
     private ?string $modelName;
     private ?int $id;
     private ?string $modalButtonAction;
+
     private Model $model;
     private ?Model $record;
     private string $modelDisplayName;
@@ -28,6 +29,7 @@ class ModalController extends Controller
         $this->modelName = $this->data->get('model');
         $this->id = $this->data->get('id');
         $this->modalButtonAction = $this->data->post('modalButtonAction');
+
         $this->model = _Model::get($this->modelName);
         $this->record = $this->model::fromId($this->id);
         $this->modelDisplayName = _Model::displayNameFromModelName($this->model::class);

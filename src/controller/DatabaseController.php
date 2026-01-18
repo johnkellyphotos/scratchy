@@ -6,6 +6,7 @@ use core\Controller;
 use Scratchy\elements\Element;
 use Throwable;
 use view\DatabaseController\IndexView;
+use view\DatabaseController\ViewUserActivityView;
 use view\DatabaseController\ViewUsersView;
 
 /** @noinspection PhpUnused */
@@ -20,6 +21,12 @@ class DatabaseController extends Controller
     public function viewUsers(): ViewUsersView
     {
         return new ViewUsersView($this->data->post('has_been_submitted') ?? false);
+    }
+
+    /** @noinspection PhpUnused */
+    public function viewUserActivity(): ViewUserActivityView
+    {
+        return new ViewUserActivityView($this->data->post('has_been_submitted') ?? false);
     }
 
     /**
