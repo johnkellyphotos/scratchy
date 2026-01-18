@@ -30,15 +30,16 @@ class DeleteRecordView extends Element
                     $success = $record->remove();
                     if ($success) {
                         $title = "The $modelDisplayName record for {$record->label()} was deleted.";
-                        $content = "You may now close the modal.";
+                        $content = new span(content: "You may now close the modal.");
                     } else {
                         $title = "The $modelDisplayName record for {$record->label()} could not be deleted.";
-                        $content = "Refresh the page and try again.";
+                        $content = new span(content: "Refresh the page and try again.");
                     }
                     break;
                 default:
                     $title = "Delete $modelDisplayName record";
-                    $content = "Are you sure you want to delete the record for <b>{$record->label()}</b>?";
+                    $content = new span(content: "Are you sure you want to delete the record for <b>{$record->label()}</b>?");
+                    $content->cleanOutput(false); // so <b> tags can render
                     $modalButtonList = [ModalButtonType::NO, ModalButtonType::YES];
                     break;
             }
@@ -48,6 +49,6 @@ class DeleteRecordView extends Element
             $modalButtonList = [ModalButtonType::OKAY];
         }
 
-        $this->append(new ModalContent(title: $title, modalButtons: $modalButtonList, elementList: new span(content: $content)));
+        $this->append(new ModalContent(title: $title, modalButtons: $modalButtonList, elementList: $content));
     }
 }

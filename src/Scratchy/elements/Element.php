@@ -97,7 +97,6 @@ class Element
                 }
             }
 
-
             foreach ($this->childElements as $index => $childElement) {
                 if ($indent) {
                     if ($index == 0) {

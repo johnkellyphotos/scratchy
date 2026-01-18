@@ -23,7 +23,9 @@ class Controller
         $actionResult = $this->{$this->action}(...$arguments);
         $webPage = new $this->webPageTemplate($actionResult ?? []);
 
-        $webPage?->title?->innerHtml($this->title ?? $this->createDefaultTitle());
+        if (isset($webPage->title)) {
+            $webPage->title?->innerHtml($this->title ?? $this->createDefaultTitle());
+        }
         http_response_code($this->responseCode);
         $webPage->output();
     }
