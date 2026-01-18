@@ -3,6 +3,7 @@
 namespace controller;
 
 use core\Controller;
+use core\Database\Model;
 use Exception;
 use model\_Model;
 use Scratchy\component\EditRecord;
@@ -17,84 +18,82 @@ use Throwable;
 /** @noinspection PhpUnused */
 class ModalController extends Controller
 {
+    private ?string $modelName;
+    private ?int $id;
+    private ?string $modalButtonAction;
+    private Model $model;
+    private ?Model $record;
+    private string $modelDisplayName;
+
     public function __construct()
     {
         $this->webPageTemplate = Modal::class;
         parent::__construct();
+
+        $this->modelName = $this->data->get('model');
+        $this->id = $this->data->get('id');
+        $this->modalButtonAction = $this->data->post('modalButtonAction');
+        $this->model = _Model::get($this->modelName);
+        $this->record = $this->model::fromId($this->id);
+        $this->modelDisplayName = _Model::displayNameFromModelName($this->model::class);
     }
 
     /** @noinspection PhpUnused */
     public function editRecord(): ModalContent
     {
         try {
-            $modelName = $this->data->get('model');
-            $id = $this->data->get('id');
-            $modalButtonAction = $this->data->post('modalButtonAction');
-
-            $model = _Model::get($modelName);
-            $record = $model::fromId($id);
-            if ($record === null) {
+            if ($this->record === null) {
                 throw new Exception('Unable to find the referenced record');
             }
 
-            $modelDisplayName = _Model::displayNameFromModelName($model::class);
-
-            switch ($modalButtonAction) {
+            switch ($this->modalButtonAction) {
                 case ModalButtonType::SAVE->value:
                     $modalButtonList = [ModalButtonType::OKAY_AND_RELOAD];
-
                     $fieldsToSave = $this->data->post('modalInputData');
 
                     foreach ($fieldsToSave as $fieldNameToSave => $fieldValueToSave) {
                         if ($fieldNameToSave === 'id') {
                             continue;
                         }
-                        $inputForField = $record::getInputTypeForColumn($fieldNameToSave);
+                        $inputForField = $this->record::getInputTypeForColumn($fieldNameToSave);
                         if ($inputForField === InputType::none) {
                             throw new Exception('Attempting to edit non-editable field.');
                         }
-                        $record->{$fieldNameToSave} = $fieldValueToSave ?: null;
+                        $this->record->{$fieldNameToSave} = $fieldValueToSave ?: null;
                     }
 
-                    $success = $record->save();
+                    $success = $this->record->save();
                     if ($success) {
-                        $title = "The $modelDisplayName record for {$record->label()} was successfully updated.";
+                        $title = "The $this->modelDisplayName record for {$this->record->label()} was successfully updated.";
                         $content = new span(content: "You may now close the modal.");
                     } else {
-                        $title = "The $modelDisplayName record for {$record->label()} could not be updated.";
+                        $title = "The $this->modelDisplayName record for {$this->record->label()} could not be updated.";
                         $content = new span(content: "Refresh the page and try again.");
                     }
                     break;
                 default:
-                    $title = "Edit $modelDisplayName record for {$record->label()}";
-                    $content = new EditRecord($record);
+                    $title = "Edit $this->modelDisplayName record for {$this->record->label()}";
+                    $content = new EditRecord($this->record);
                     $modalButtonList = [ModalButtonType::CANCEL, ModalButtonType::SAVE];
                     break;
             }
-        } catch (Throwable $e) {
-            $title = $e->getMessage() ?? 'You are unable to edit this record';
+        } catch (Throwable) {
+            $title = 'You are unable to edit this record';
             $content = new span(content: 'Either the record does not exist or you do not have permission to edit.');
             $modalButtonList = [ModalButtonType::CANCEL];
         }
         return new ModalContent(title: $title, modalButtons: $modalButtonList, elementList: $content);
     }
 
+    /** @noinspection PhpUnused */
     public function viewRecord(): ModalContent
     {
         try {
-            $modelName = $this->data->get('model');
-            $id = $this->data->get('id');
-
-            $model = _Model::get($modelName);
-            $record = $model::fromId($id);
-            if ($record === null) {
+            if ($this->record === null) {
                 throw new Exception('Unable to find the referenced record');
             }
-
-            $modelDisplayName = _Model::displayNameFromModelName($model::class);
-
-            $title = "View $modelDisplayName record for {$record->label()}";
-            $content = new ViewRecord($record);
+            $title = "View $this->modelDisplayName record for {$this->record->label()}";
+            $content = new ViewRecord($this->record);
             $modalButtonList = [ModalButtonType::OKAY];
         } catch (Throwable) {
             $title = 'You are unable to delete this record';
@@ -108,33 +107,24 @@ class ModalController extends Controller
     public function deleteRecord(): ModalContent
     {
         try {
-            $modelName = $this->data->get('model');
-            $id = $this->data->get('id');
-            $modalButtonAction = $this->data->post('modalButtonAction');
-
-            $model = _Model::get($modelName);
-            $record = $model::fromId($id);
-            if ($record === null) {
+            if ($this->record === null) {
                 throw new Exception('Unable to find the referenced record');
             }
-
-            $modelDisplayName = _Model::displayNameFromModelName($model::class);
-
-            switch ($modalButtonAction) {
+            switch ($this->modalButtonAction) {
                 case ModalButtonType::YES->value:
                     $modalButtonList = [ModalButtonType::OKAY_AND_RELOAD];
-                    $success = $record->remove();
+                    $success = $this->record->remove();
                     if ($success) {
-                        $title = "The $modelDisplayName record for {$record->label()} was deleted.";
+                        $title = "The $this->modelDisplayName record for {$this->record->label()} was deleted.";
                         $content = "You may now close the modal.";
                     } else {
-                        $title = "The $modelDisplayName record for {$record->label()} could not be deleted.";
+                        $title = "The $this->modelDisplayName record for {$this->record->label()} could not be deleted.";
                         $content = "Refresh the page and try again.";
                     }
                     break;
                 default:
-                    $title = "Delete $modelDisplayName record";
-                    $content = "Are you sure you want to delete the record for <b>{$record->label()}</b>?";
+                    $title = "Delete $this->modelDisplayName record";
+                    $content = "Are you sure you want to delete the record for <b>{$this->record->label()}</b>?";
                     $modalButtonList = [ModalButtonType::NO, ModalButtonType::YES];
                     break;
             }
