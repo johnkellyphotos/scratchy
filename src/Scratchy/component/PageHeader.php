@@ -24,6 +24,8 @@ class PageHeader extends element
 
         $link = new link(attributes: ['rel' => 'stylesheet', 'href' => 'https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css']);
         $this->append($link);
+        $link = new link(attributes: ['rel' => 'stylesheet', 'href' => '/css/slides.css']);
+        $this->append($link);
 
         $styles = [
             ':root' =>[

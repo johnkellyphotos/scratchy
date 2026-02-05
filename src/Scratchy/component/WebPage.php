@@ -42,10 +42,6 @@ class WebPage extends Element
         $script = new script(src: '/scripts/row-action.js');
         $this->append($script);
 
-        $script = new script(content: <<<HTML
-            console.log("test");
-        HTML
-        );
         $this->append($script);
     }
 

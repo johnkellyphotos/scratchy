@@ -7,7 +7,7 @@ use Scratchy\elements\Element;
 use Throwable;
 use view\DatabaseController\IndexView;
 use view\DatabaseController\ViewUserActivityView;
-use view\DatabaseController\ViewUsersView;
+use view\DatabaseController\PowerPointRecordView;
 
 /** @noinspection PhpUnused */
 class DatabaseController extends Controller
@@ -18,15 +18,9 @@ class DatabaseController extends Controller
     }
 
     /** @noinspection PhpUnused */
-    public function viewUsers(): ViewUsersView
+    public function viewPowerpointControlRecords(): PowerPointRecordView
     {
-        return new ViewUsersView($this->data->post('has_been_submitted') ?? false);
-    }
-
-    /** @noinspection PhpUnused */
-    public function viewUserActivity(): ViewUserActivityView
-    {
-        return new ViewUserActivityView($this->data->post('has_been_submitted') ?? false);
+        return new PowerPointRecordView();
     }
 
     /**
