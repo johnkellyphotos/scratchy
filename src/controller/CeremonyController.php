@@ -4,10 +4,12 @@ namespace controller;
 
 use core\Controller;
 
+use Scratchy\component\ParticipantsSlide;
 use Scratchy\component\PowerPoint;
 use Scratchy\component\PowerPointSlide;
 use Scratchy\component\PowerPointSlides;
 use Scratchy\component\PowerPointVideo;
+use Scratchy\component\WelcomeSlide;
 
 /** @noinspection PhpUnused */
 class CeremonyController extends Controller
@@ -30,7 +32,10 @@ class CeremonyController extends Controller
         $nicolaWrightWalkUpVideo = new PowerPointVideo("https://res.cloudinary.com/tritium/video/upload/v1770175585/awards2026/nicola-wright-intro_wv8ky2.mp4");
         $yleLusigneaWalkUpVideo = new PowerPointVideo("https://res.cloudinary.com/tritium/video/upload/v1770176759/awards2026/kyle-lusignea-intro_u6zggs.mp4");
 
-        $activeSlide = $this->data->get('slide') ?? 0;
+        $activeSlide = $this->data->get('slide') ?? 2;
+
+        // delete
+        $activeSlide = 1;
 
         $PowerPointSlides = new PowerPointSlides(
             new PowerPointSlide(
@@ -39,17 +44,40 @@ class CeremonyController extends Controller
                 ],
                 fullScreenContent: true,
             ),
-            new PowerPointSlide(
+            new WelcomeSlide(
                 contentList: [
 
                 ],
                 title: 'Welcome to the 2026 John\'s birthday party awards ceremony.'
             ),
-            new PowerPointSlide(
+            new ParticipantsSlide(
+                [
+                    [
+                        'name' => 'Johnny Lindeman',
+                        'url' => 'https://res.cloudinary.com/tritium/image/upload/v1770296441/awards2026/johnny_fq6dvq.jpg'
+                    ],                    [
+                        'name' => 'Maddy Wirth',
+                        'url' => 'https://res.cloudinary.com/tritium/image/upload/v1770296442/awards2026/maddy_ktnq7n.jpg'
+                    ],                    [
+                        'name' => 'Larissa Jacobs',
+                        'url' => 'https://res.cloudinary.com/tritium/image/upload/v1770296441/awards2026/larissa_pb33qq.jpg'
+                    ],                    [
+                        'name' => 'Nicola Wright',
+                        'url' => 'https://res.cloudinary.com/tritium/image/upload/v1770296806/awards2026/nicola_1_amimhr.jpg'
+                    ],                    [
+                        'name' => 'Taylor Strader',
+                        'url' => 'https://res.cloudinary.com/tritium/image/upload/v1770296441/awards2026/taylor_tzqpxu.jpg'
+                    ],                    [
+                        'name' => 'Kyle Lusignea',
+                        'url' => 'https://res.cloudinary.com/tritium/image/upload/v1770296440/awards2026/kyle_lqqppx.jpg'
+                    ],
+                ]
+            ),
+            new WelcomeSlide(
                 contentList: [
 
                 ],
-                title: ''
+                title: 'First birthday party survivor...'
             ),
             new PowerPointSlide(
                 contentList: [
@@ -57,11 +85,11 @@ class CeremonyController extends Controller
                 ],
                 fullScreenContent: true,
             ),
-            new PowerPointSlide(
+            new WelcomeSlide(
                 contentList: [
 
                 ],
-                title: ''
+                title: 'Second birthday party survivor...'
             ),
             new PowerPointSlide(
                 contentList: [
@@ -69,11 +97,11 @@ class CeremonyController extends Controller
                 ],
                 fullScreenContent: true,
             ),
-            new PowerPointSlide(
+            new WelcomeSlide(
                 contentList: [
 
                 ],
-                title: ''
+                title: 'Third birthday party survivor...'
             ),
             new PowerPointSlide(
                 contentList: [
@@ -81,11 +109,11 @@ class CeremonyController extends Controller
                 ],
                 fullScreenContent: true,
             ),
-            new PowerPointSlide(
+            new WelcomeSlide(
                 contentList: [
 
                 ],
-                title: ''
+                title: 'Fourth birthday party survivor...'
             ),
             new PowerPointSlide(
                 contentList: [
@@ -93,11 +121,11 @@ class CeremonyController extends Controller
                 ],
                 fullScreenContent: true,
             ),
-            new PowerPointSlide(
+            new WelcomeSlide(
                 contentList: [
 
                 ],
-                title: ''
+                title: 'Fifth birthday party survivor...'
             ),
             new PowerPointSlide(
                 contentList: [
@@ -105,11 +133,11 @@ class CeremonyController extends Controller
                 ],
                 fullScreenContent: true,
             ),
-            new PowerPointSlide(
+            new WelcomeSlide(
                 contentList: [
 
                 ],
-                title: ''
+                title: 'Final birthday party survivor...'
             ),
             new PowerPointSlide(
                 contentList: [
@@ -117,11 +145,11 @@ class CeremonyController extends Controller
                 ],
                 fullScreenContent: true,
             ),
-            new PowerPointSlide(
+            new WelcomeSlide(
                 contentList: [
 
                 ],
-                title: ''
+                title: 'Congratulations birthday party survivors'
             ),
         );
 
