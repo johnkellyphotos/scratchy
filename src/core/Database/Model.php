@@ -12,6 +12,7 @@ abstract class Model extends Database
     protected static string $table;
     protected static string $primaryKey = 'id';
     private static array $columnLabel = [];
+    private static array $columnDataType = [];
 
     public readonly ?int $id;
     public ?string $label = null;
@@ -151,6 +152,35 @@ abstract class Model extends Database
         return null;
     }
 
+    public static function castToDataType(string $columnName, mixed $value): string|int|float
+    {
+        if ($columnName === 'label') {
+            return (string)$value;
+        }
+        $model = static::class;
+        if (!isset(self::$columnDataType[$model][$columnName])) {
+            $columns = $model::define();
+            foreach ($columns as $column) {
+                if ($column->name === $columnName) {
+                    self::$columnDataType[$model] = [];
+                    self::$columnDataType[$model][$columnName] = $column->type;
+                    break;
+                }
+            }
+        }
+
+        return match (self::$columnDataType[$model][$columnName]) {
+            DatabaseColumnType::BOOL,
+            DatabaseColumnType::BIGINT,
+            DatabaseColumnType::INT,
+            => (int)$value,
+            DatabaseColumnType::FLOAT,
+            DatabaseColumnType::DOUBLE,
+            => (float)$value,
+            default => (string)$value,
+        };
+    }
+
     public static function getFieldUsedAsLabel(): string
     {
         $model = static::class;
@@ -209,8 +239,8 @@ abstract class Model extends Database
                 continue;
             }
 
-            $sets[] = "{$column} = :{$column}";
-            $data[":{$column}"] = $value;
+            $sets[] = "$column = :$column";
+            $data[":$column"] = self::castToDataType($column, $value);
         }
 
         if (count($sets) === 0) {
@@ -248,7 +278,7 @@ abstract class Model extends Database
 
             $columns[] = $column;
             $placeHolders[] = ':' . $column;
-            $data[':' . $column] = $value;
+            $data[':' . $column] = self::castToDataType($column, $value);
         }
 
         $columnSql = implode(', ', $columns);

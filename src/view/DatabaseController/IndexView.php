@@ -5,6 +5,7 @@ namespace view\DatabaseController;
 use core\Database\Schema;
 use core\Database\SchemaComparator;
 use Scratchy\component\PageContent;
+use Scratchy\elements\a;
 use Scratchy\elements\button;
 use Scratchy\elements\div;
 use Scratchy\elements\form;
@@ -89,7 +90,8 @@ class IndexView extends PageContent
             }
 
         } else {
-            $this->append(new div(content: 'Build in progress...'));
+            $this->append(new div(content: 'The database has been rebuilt.'));
+            $this->append(new a(content: 'Reload', attributes: ['href' => '/Database/']));
             Schema::buildDatabase();
         }
 
