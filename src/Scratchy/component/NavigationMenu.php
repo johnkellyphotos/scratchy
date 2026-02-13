@@ -61,19 +61,6 @@ class NavigationMenu extends element
     {
         return [
             ['label' => 'Home', 'href' => '/', 'icon' => ['fa-solid', 'fa-house']],
-            [
-                'label' => 'Birthday parties',
-                'icon' => ['fa-cake', 'fa-user'],
-                'children' => [
-                    ['label' => '2026', 'href' => '/Birthday-Party/year/2026/'],
-                    ['label' => '2025', 'href' => '/Birthday-Party/year/2025/'],
-                    ['label' => '2024', 'href' => '/Birthday-Party/year/2024/'],
-                    ['label' => '2023', 'href' => '/Birthday-Party/year/2023/'],
-                    ['label' => '2022', 'href' => '/Birthday-Party/year/2022/'],
-                    ['label' => '2021', 'href' => '/Birthday-Party/year/2021/'],
-                ],
-            ],
-            ['label' => 'Ceremony', 'href' => '/Ceremony/']
         ];
     }
 

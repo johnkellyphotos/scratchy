@@ -13,7 +13,6 @@ use Scratchy\elements\h1;
 use Scratchy\elements\input;
 use Scratchy\elements\li;
 use Scratchy\elements\ul;
-use Scratchy\elements\a;
 use Throwable;
 
 class IndexView extends PageContent
@@ -102,6 +101,5 @@ class IndexView extends PageContent
             $form->append(new button(classes: ['btn', 'btn-primary'], content: 'Rebuild database'));
             $this->append($form);
         }
-        $this->append(new a(content: 'View powerpoint control records', attributes: ['href' => '/Database/view-powerpoint-control-records/']));
     }
 }

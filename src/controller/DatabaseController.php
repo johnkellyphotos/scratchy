@@ -6,8 +6,6 @@ use core\Controller;
 use Scratchy\elements\Element;
 use Throwable;
 use view\DatabaseController\IndexView;
-use view\DatabaseController\ViewUserActivityView;
-use view\DatabaseController\PowerPointRecordView;
 
 /** @noinspection PhpUnused */
 class DatabaseController extends Controller
@@ -15,12 +13,6 @@ class DatabaseController extends Controller
     public function __construct()
     {
         parent::__construct();
-    }
-
-    /** @noinspection PhpUnused */
-    public function viewPowerpointControlRecords(): PowerPointRecordView
-    {
-        return new PowerPointRecordView();
     }
 
     /**

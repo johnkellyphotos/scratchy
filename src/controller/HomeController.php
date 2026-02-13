@@ -26,7 +26,7 @@ class HomeController extends Controller
     {
         $features = new ul(classes: ['mb-4']);
         $features->append(new li(content: 'Pages from reusable elements with clean, consistent markup.'));
-        $features->append(new li(content: 'Components for navigation, slides, and modals you can extend.'));
+        $features->append(new li(content: 'Components for navigation, forms, and modals you can extend.'));
         $features->append(new li(content: 'Controllers that keep logic separate from presentation.'));
         $features->append(new li(content: 'A simple path to add models and persistent data.'));
 

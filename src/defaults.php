@@ -5,7 +5,7 @@
 const APP_DEFAULT_CONTROLLER = 'Home'; // Default controller to load if not specified (IE: site root)
 const APP_DEFAULT_METHOD = 'index'; // Default controller action if not specified
 
-const APP_NAME = 'A generic website'; // HTML friend app name
+const APP_NAME = 'Scratchy'; // HTML friend app name
 
 const _INDENT_ = true; // Add indenting and whitespace to the HTML output
 
