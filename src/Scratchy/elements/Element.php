@@ -94,7 +94,7 @@ class Element
             $html .= ">";
 
             if ($this->content !== null) {
-                if ($this instanceof script || !$this->cleanOutput) {
+                if ($this instanceof script || $this instanceof style || !$this->cleanOutput) {
                     $html .= $this->content;
                 } else {
                     $html .= c($this->content);
