@@ -10,8 +10,10 @@ use Scratchy\elements\button;
 use Scratchy\elements\div;
 use Scratchy\elements\form;
 use Scratchy\elements\h1;
+use Scratchy\elements\h2;
 use Scratchy\elements\input;
 use Scratchy\elements\li;
+use Scratchy\elements\p;
 use Scratchy\elements\ul;
 use Throwable;
 
@@ -40,12 +42,14 @@ class IndexView extends PageContent
 
     private function appendHeader(): void
     {
-        $this->append(new h1(content: 'Configure database', classes: ['primary-color']));
+        $this->append(new h1(content: 'Database update review', classes: ['primary-color']));
+        $this->append(new h2(content: 'Review schema changes before rebuilding'));
+        $this->append(new p(content: 'This page compares your current database schema with the codebase models. As your models change, the differences will appear here so you can review them before applying updates.'));
     }
 
     private function renderBuildComplete(): void
     {
-        $this->append(new div(content: 'The database has been rebuilt.'));
+        $this->append(new div(content: 'Update complete. The database has been rebuilt.'));
         $this->append(new a(content: 'Reload', attributes: ['href' => '/Database/']));
         Schema::buildDatabase();
     }
@@ -54,9 +58,11 @@ class IndexView extends PageContent
     {
         $schemaDifferences = Schema::getDifference();
         if (!count($schemaDifferences)) {
-            $this->append(new div(content: 'Database schema matches model schema. No changes required.'));
+            $this->append(new div(content: 'Everything is in sync. No changes required.'));
             return false;
         }
+
+        $this->append(new p(content: 'Below is a detailed change list by table. You can review each item and then rebuild the database to apply the updates.'));
 
         $list = new ul(id: 'top-level-list-container');
         $hasChanges = false;
