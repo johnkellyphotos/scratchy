@@ -15,7 +15,7 @@ class UserModelView extends PageContent
     {
         parent::__construct();
 
-        $this->append(new h1(content: 'User model', classes: ['primary-color']));
+        $this->append(new h1(classes: ['primary-color'], content: 'User model'));
         $this->append(new p(content: 'Rows currently stored in the users table.'));
 
         $users = UserModel::findAll();
