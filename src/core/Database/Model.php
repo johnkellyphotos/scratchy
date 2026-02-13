@@ -147,6 +147,9 @@ abstract class Model extends Database
 
     public static function castToDataType(string $columnName, mixed $value): mixed
     {
+        if ($value === null) {
+            return null;
+        }
         if ($columnName === 'label') {
             return (string)$value;
         }
