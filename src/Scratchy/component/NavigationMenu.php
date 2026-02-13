@@ -61,6 +61,22 @@ class NavigationMenu extends element
     {
         return [
             ['label' => 'Home', 'href' => '/', 'icon' => ['fa-solid', 'fa-house']],
+            [
+                'label' => 'Tests',
+                'icon' => ['fa-solid', 'fa-vial'],
+                'children' => [
+                    ['label' => 'Page not found', 'href' => '/not-a-real-page/'],
+                    ['label' => 'Error page', 'href' => '/Error-Test/'],
+                ],
+            ],
+            [
+                'label' => 'Database',
+                'icon' => ['fa-solid', 'fa-database'],
+                'children' => [
+                    ['label' => 'Rebuild database', 'href' => '/Database/'],
+                    ['label' => 'View tables', 'href' => '/Database/tables/'],
+                ],
+            ],
         ];
     }
 
