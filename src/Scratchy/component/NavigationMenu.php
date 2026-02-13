@@ -74,7 +74,7 @@ class NavigationMenu extends element
                 'icon' => ['fa-solid', 'fa-database'],
                 'children' => [
                     ['label' => 'Rebuild database', 'href' => '/Database/'],
-                    ['label' => 'View tables', 'href' => '/Database/tables/'],
+                    ['label' => 'User model', 'href' => '/Database/tables/'],
                 ],
             ],
         ];

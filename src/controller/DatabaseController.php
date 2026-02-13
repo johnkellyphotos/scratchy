@@ -6,7 +6,7 @@ use core\Controller;
 use Scratchy\elements\Element;
 use Throwable;
 use view\DatabaseController\IndexView;
-use view\DatabaseController\TablesView;
+use view\DatabaseController\UserModelView;
 
 /** @noinspection PhpUnused */
 class DatabaseController extends Controller
@@ -28,6 +28,6 @@ class DatabaseController extends Controller
     /** @noinspection PhpUnused */
     public function tables(): ?Element
     {
-        return new TablesView();
+        return new UserModelView();
     }
 }

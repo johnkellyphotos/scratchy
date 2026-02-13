@@ -9,18 +9,20 @@ use Scratchy\InputType;
 
 class UserModel extends Model
 {
-    public ?string $first_name = null;
-    public ?string $last_name = null;
-    public ?string $email = null;
+    public ?string $username = null;
     public ?string $password = null;
+    public ?string $birthday = null;
+    public ?string $created = null;
+    public ?string $lastSignIn = null;
 
     public static function define(): array
     {
         return [
-            new DatabaseColumn('first_name', DatabaseColumnType::VARCHAR_64, InputType::text),
-            new DatabaseColumn('last_name', DatabaseColumnType::VARCHAR_64, InputType::text),
-            new DatabaseColumn('email', DatabaseColumnType::VARCHAR_256, InputType::text, unique: true, isLabel: true),
+            new DatabaseColumn('username', DatabaseColumnType::VARCHAR_64, InputType::text, unique: true, isLabel: true),
             new DatabaseColumn('password', DatabaseColumnType::VARCHAR_256, InputType::password),
+            new DatabaseColumn('birthday', DatabaseColumnType::DATE, InputType::date, nullable: true),
+            new DatabaseColumn('created', DatabaseColumnType::DATETIME, InputType::datetime),
+            new DatabaseColumn('lastSignIn', DatabaseColumnType::DATETIME, InputType::datetime, nullable: true),
         ];
     }
 }

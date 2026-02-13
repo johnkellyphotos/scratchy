@@ -31,6 +31,16 @@ class IndexView extends PageContent
 
         $buildButton = null;
 
+        $formatDiffValue = static function (mixed $value): string {
+            if (is_bool($value)) {
+                return $value ? 'true' : 'false';
+            }
+            if ($value === null) {
+                return 'null';
+            }
+            return (string)$value;
+        };
+
         if ($executeBuild != 1) {
             $schemaDifferences = Schema::getDifference();
             if (count($schemaDifferences)) {
@@ -54,22 +64,41 @@ class IndexView extends PageContent
                         ];
 
                         foreach ($changeFieldNames as $changeFieldName => $message) {
-                            if ($schemaDifference->{$changeFieldName}) {
-                                $columns = "";
-                                $number = count($schemaDifference->{$changeFieldName});
-                                $s = $number != 1 ? 's' : '';
-                                $isAre = $number != 1 ? 'are' : 'is';
-                                foreach ($schemaDifference->{$changeFieldName} as $index => $difference) {
-                                    $columns .= "`<b>$difference</b>`";
-                                    if ($index < ($number - 1)) {
-                                        $columns .= ', ';
-                                    }
-                                }
-                                $innerLi = new li(content: "The column$s $columns $isAre $message");
-                                $innerLi->cleanOutput(false);
-                                $innerUl->append($innerLi);
-
+                            if (!$schemaDifference->{$changeFieldName}) {
+                                continue;
                             }
+
+                            if ($changeFieldName === 'changedColumns') {
+                                foreach ($schemaDifference->changedColumns as $columnName => $diffs) {
+                                    $parts = [];
+                                    foreach ($diffs as $diffKey => $diff) {
+                                        $want = $diff['want'] ?? null;
+                                        $have = $diff['have'] ?? null;
+                                        $wantText = $formatDiffValue($want);
+                                        $haveText = $formatDiffValue($have);
+                                        $parts[] = "<b>$diffKey</b> (code: <code>$wantText</code>, db: <code>$haveText</code>)";
+                                    }
+                                    $details = implode('; ', $parts);
+                                    $innerLi = new li(content: "Column `<b>$columnName</b>` differs: $details.");
+                                    $innerLi->cleanOutput(false);
+                                    $innerUl->append($innerLi);
+                                }
+                                continue;
+                            }
+
+                            $columns = "";
+                            $number = count($schemaDifference->{$changeFieldName});
+                            $s = $number != 1 ? 's' : '';
+                            $isAre = $number != 1 ? 'are' : 'is';
+                            foreach ($schemaDifference->{$changeFieldName} as $index => $difference) {
+                                $columns .= "`<b>$difference</b>`";
+                                if ($index < ($number - 1)) {
+                                    $columns .= ', ';
+                                }
+                            }
+                            $innerLi = new li(content: "The column$s $columns $isAre $message");
+                            $innerLi->cleanOutput(false);
+                            $innerUl->append($innerLi);
                         }
                         $subLi = new li(content: "The following SQL may be run to resolve this:");
                         $innerUl->append($subLi);
@@ -102,4 +131,5 @@ class IndexView extends PageContent
             $this->append($form);
         }
     }
+
 }
