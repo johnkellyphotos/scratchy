@@ -16,9 +16,19 @@ class SmartTable extends Element
 {
     public function __construct(array $tableRows, array $actions = [])
     {
-        parent::__construct(tagType: TagType::table, classes: ['table', 'table-striped', 'table-hover', 'mt-2', 'mb-2']);
-
         $firstEntry = $tableRows[0] ?? null;
+        $modelName = $firstEntry ? substr($firstEntry::class, strrpos($firstEntry::class, '\\') + 1) : null;
+        $attributes = ['data-app-table' => '1'];
+        if ($modelName) {
+            $attributes['data-app-table-model'] = $modelName;
+        }
+
+        parent::__construct(
+            tagType: TagType::table,
+            classes: ['table', 'table-striped', 'table-hover', 'mt-2', 'mb-2'],
+            attributes: $attributes
+        );
+
         if (!$firstEntry) {
             return;
         }

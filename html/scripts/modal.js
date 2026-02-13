@@ -73,20 +73,66 @@
                                     inputsData[inputEl.name] = inputEl.value
                                 })
 
+                                this.autoCloseNext = action === this.modalButtonActions.Save;
                                 this.launch(url, {modalButtonAction: action, modalInputData: inputsData});
                             }
 
                             modal.hide();
 
                             if (shouldReload) {
-                                window.location.reload();
+                                this.reloadTable();
                             }
                         });
                     });
 
                     modal.show();
+
+                    if (this.autoCloseNext) {
+                        const reloadButton = modalEl.querySelector('[data-app-modal-reload="1"]');
+                        this.autoCloseNext = false;
+                        setTimeout(() => {
+                            modal.hide();
+                            if (reloadButton) {
+                                this.reloadTable();
+                            }
+                        }, 0);
+                    }
                 })
                 .catch(err => console.error(err));
+        };
+
+        reloadTable = () => {
+            const table = this.lastTable;
+            const modelName = this.lastTableModel;
+
+            if (!table) {
+                window.location.reload();
+                return;
+            }
+
+            fetch(window.location.href, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+                .then(r => r.text())
+                .then(html => {
+                    const container = document.createElement('div');
+                    container.innerHTML = html;
+
+                    let selector = 'table[data-app-table]';
+                    if (modelName) {
+                        selector = `table[data-app-table][data-app-table-model="${modelName}"]`;
+                    }
+
+                    const freshTable = container.querySelector(selector);
+                    if (!freshTable) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    table.replaceWith(freshTable);
+                    if (window.loadRowActions) {
+                        window.loadRowActions();
+                    }
+                })
+                .catch(() => window.location.reload());
         };
     }
 

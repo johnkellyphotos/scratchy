@@ -46,8 +46,8 @@ class EditRecordView extends Element
                     $success = $record->save();
 
                     if ($success) {
-                        $title = "The $modelDisplayName record for {$record->label()} was successfully updated.";
-                        $content = new span(content: "You may now close the modal.");
+                        $title = "Record updated";
+                        $content = new span(content: "The $modelDisplayName record for {$record->label()} was successfully updated.");
                     } else {
                         $title = "The $modelDisplayName record for {$record->label()} could not be updated.";
                         $content = new span(content: "Refresh the page and try again.");
