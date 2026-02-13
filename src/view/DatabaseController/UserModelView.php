@@ -2,8 +2,9 @@
 
 namespace view\DatabaseController;
 
-use model\UserModel;
 use core\RowActionType;
+use lib\UserPresenter;
+use model\UserModel;
 use Scratchy\component\PageContent;
 use Scratchy\component\SmartTable;
 use Scratchy\elements\h1;
@@ -24,6 +25,7 @@ class UserModelView extends PageContent
             return;
         }
 
-        $this->append(new SmartTable($users, [RowActionType::VIEW, RowActionType::EDIT]));
+        $presenters = UserPresenter::list($users);
+        $this->append(new SmartTable($presenters, [RowActionType::VIEW, RowActionType::EDIT], UserModel::class));
     }
 }

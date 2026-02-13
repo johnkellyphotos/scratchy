@@ -14,10 +14,13 @@ use Scratchy\TagType;
 
 class SmartTable extends Element
 {
-    public function __construct(array $tableRows, array $actions = [])
+    public function __construct(array $tableRows, array $actions = [], ?string $modelNameOverride = null, array $formatters = [])
     {
         $firstEntry = $tableRows[0] ?? null;
-        $modelName = $firstEntry ? substr($firstEntry::class, strrpos($firstEntry::class, '\\') + 1) : null;
+        $modelName = $modelNameOverride;
+        if (!$modelName && $firstEntry) {
+            $modelName = substr($firstEntry::class, strrpos($firstEntry::class, '\\') + 1);
+        }
         $attributes = ['data-app-table' => '1'];
         if ($modelName) {
             $attributes['data-app-table-model'] = $modelName;
@@ -62,7 +65,7 @@ class SmartTable extends Element
             if (count($rowActions)) {
                 $td = new td();
                 foreach ($rowActions as $rowAction) {
-                    $modelName = substr($tableRow::class, strrpos($tableRow::class, '\\') + 1);
+                    $rowModelName = $modelNameOverride ?: substr($tableRow::class, strrpos($tableRow::class, '\\') + 1);
 
                     $button = new button(
                         classes: [
@@ -73,7 +76,7 @@ class SmartTable extends Element
                             'style' => 'font-size: 1.3rem; padding: 0.25rem;',
                             'title' => $rowAction->label,
                             'data-app-row-action' => $rowAction->action(),
-                            'data-app-model' => $modelName,
+                            'data-app-model' => $rowModelName,
                             'data-app-id' => $tableRow?->id,
                         ],
                         content: $rowAction->icon
@@ -87,7 +90,18 @@ class SmartTable extends Element
                 if ($key === 'id') {
                     continue;
                 }
-                $tr->append(new td(content: $tableCell));
+                $formattedValue = $tableCell;
+                if (isset($formatters[$key]) && is_callable($formatters[$key])) {
+                    $formattedValue = $formatters[$key]($tableCell, $tableRow, $key);
+                }
+                $formattedValue = is_string($formattedValue) ? trim($formattedValue) : $formattedValue;
+                $displayValue = c((string)($formattedValue ?? ''));
+                if ($displayValue === '') {
+                    $displayValue = '<span style="opacity:0.5">-</span>';
+                }
+                $td = new td(content: $displayValue);
+                $td->cleanOutput(false);
+                $tr->append($td);
             }
             $tbody->append($tr);
         }
