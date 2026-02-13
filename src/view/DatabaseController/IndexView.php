@@ -26,7 +26,7 @@ class IndexView extends PageContent
         $executeBuild ??= false;
 
         $this->append(
-            new h1(content: 'Configure database', classes: ['primary-color']),
+            new h1(classes: ['primary-color'], content: 'Configure database'),
         );
 
         $buildButton = null;
