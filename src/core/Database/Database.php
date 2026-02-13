@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace core\Database;
 
 use PDO;
+use PDOStatement;
 use Throwable;
 
 abstract class Database
@@ -34,10 +35,16 @@ abstract class Database
         return self::$pdo;
     }
 
-    protected static function one(string $sql, array $params = []): ?array
+    protected static function statement(string $sql, array $params = []): PDOStatement
     {
         $stmt = self::pdo()->prepare($sql);
         $stmt->execute($params);
+        return $stmt;
+    }
+
+    protected static function one(string $sql, array $params = []): ?array
+    {
+        $stmt = self::statement($sql, $params);
         $row = $stmt->fetch();
         if ($row === false) {
             return null;
@@ -47,16 +54,12 @@ abstract class Database
 
     protected static function all(string $sql, array $params = []): array
     {
-        $stmt = self::pdo()->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll();
+        return self::statement($sql, $params)->fetchAll();
     }
 
     protected static function exec(string $sql, array $params = []): int
     {
-        $stmt = self::pdo()->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->rowCount();
+        return self::statement($sql, $params)->rowCount();
     }
 
     protected static function delete(string $sql, array $params = []): int
@@ -66,15 +69,13 @@ abstract class Database
 
     protected static function insert(string $sql, array $params = []): string
     {
-        $stmt = self::pdo()->prepare($sql);
-        $stmt->execute($params);
+        self::statement($sql, $params);
         return self::pdo()->lastInsertId();
     }
 
     protected static function update(string $sql, array $params = []): bool
     {
-        $stmt = self::pdo()->prepare($sql);
-        $stmt->execute($params);
+        self::statement($sql, $params);
         return true;
     }
 

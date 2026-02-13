@@ -93,13 +93,7 @@ abstract class Model extends Database
 
         $modelList = [];
         foreach ($results as $result) {
-            $modelName = static::class;
-            $model = new $modelName();
-            $columns = ['id' => null, ...get_object_vars($model)];
-            foreach ($columns as $column => $value) {
-                $model->{$column} = $result[$column];
-            }
-            $modelList[] = $model;
+            $modelList[] = self::hydrateFromRow($result);
         }
         return $modelList;
     }
@@ -117,13 +111,7 @@ abstract class Model extends Database
         $result = self::one("SELECT * FROM $table WHERE id=?;", [$id]);
 
         if ($result) {
-            $modelName = static::class;
-            $model = new $modelName();
-            $columns = ['id' => null, ...get_object_vars($model)];
-            foreach ($columns as $column => $value) {
-                $model->{$column} = $result[$column];
-            }
-            return $model;
+            return self::hydrateFromRow($result);
         }
 
         return null;
@@ -140,16 +128,21 @@ abstract class Model extends Database
         }
 
         if ($result) {
-            $modelName = static::class;
-            $model = new $modelName();
-            $columns = ['id' => null, ...get_object_vars($model)];
-            foreach ($columns as $column => $value) {
-                $model->{$column} = $result[$column];
-            }
-            return $model;
+            return self::hydrateFromRow($result);
         }
 
         return null;
+    }
+
+    private static function hydrateFromRow(array $row): static
+    {
+        $modelName = static::class;
+        $model = new $modelName();
+        $columns = ['id' => null, ...get_object_vars($model)];
+        foreach ($columns as $column => $value) {
+            $model->{$column} = $row[$column];
+        }
+        return $model;
     }
 
     public static function castToDataType(string $columnName, mixed $value): mixed
