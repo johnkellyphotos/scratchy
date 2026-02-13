@@ -37,6 +37,16 @@
         };
 
         launch = (url, postData = null) => {
+            if (!this.escBound) {
+                this.escBound = true;
+                document.addEventListener('keydown', (e) => {
+                    if (e.key !== 'Escape') {
+                        return;
+                    }
+                    this.closeAllModals();
+                });
+            }
+
             const req = postData ? this.post(url, postData) : fetch(url).then(r => r.text());
 
             req
@@ -46,12 +56,16 @@
                     document.body.appendChild(container);
 
                     const modalEl = container.querySelector('.modal');
-                    const modal = new mdb.Modal(modalEl);
+                    const modal = new mdb.Modal(modalEl, {keyboard: true, backdrop: true, focus: true});
 
                     const cleanup = () => {
                         try {
                             modal.dispose?.();
                         } catch (e) {
+                        }
+                        container.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                        if (!document.querySelector('.modal.show')) {
+                            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
                         }
                         container.remove();
                     };
@@ -133,6 +147,14 @@
                     }
                 })
                 .catch(() => window.location.reload());
+        };
+
+        closeAllModals = () => {
+            document.querySelectorAll('.modal').forEach(modalEl => {
+                const instance = mdb.Modal.getInstance(modalEl) || new mdb.Modal(modalEl);
+                instance.hide();
+            });
+            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
         };
     }
 
