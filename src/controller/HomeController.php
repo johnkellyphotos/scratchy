@@ -22,7 +22,7 @@ class HomeController extends Controller
     {
         return new PageContent(
             new h1(content: 'John\'s birthday party sufferfests', classes: ['primary-color']),
-            new h2('Build websites quickly and cleanly.'),
+            new h2(content: 'Build websites quickly and cleanly.'),
         );
     }
 }

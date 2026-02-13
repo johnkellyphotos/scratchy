@@ -17,6 +17,6 @@ class PageNotFoundController extends Controller
     {
         $this->responseCode = PAGE_NOT_FOUND_STATUS_CODE;
         $this->title = 'Page not found!';
-        return new h1('Page not found!');
+        return new h1(content: 'Page not found!');
     }
 }

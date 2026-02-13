@@ -105,7 +105,7 @@ class NavigationMenu extends element
             $a->append($icon);
         }
 
-        $a->append(new span($item['label'] ?? ''));
+        $a->append(new span(content: $item['label'] ?? ''));
         $li->append($a);
 
         return $li;
@@ -149,7 +149,7 @@ class NavigationMenu extends element
             $a->append($icon);
         }
 
-        $a->append(new span($label));
+        $a->append(new span(content: $label));
         $li->append($a);
 
         $ul = new ul(
@@ -172,7 +172,7 @@ class NavigationMenu extends element
                 attributes: ['href' => $cHref]
             );
 
-            $cA->append(new span($child['label'] ?? ''));
+            $cA->append(new span(content: $child['label'] ?? ''));
 
             // FIX: dropdown <a> must be inside <li> and <li> must be appended to the <ul>
             $cLi->append($cA);
