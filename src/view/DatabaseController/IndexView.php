@@ -96,7 +96,9 @@ class IndexView extends PageContent
             'missingColumns' => 'present in the codebase but missing from the database.',
             'extraColumns' => 'present in the database but missing from the codebase.',
             'changedColumns' => 'different in the codebase from the column definition in the database.',
-            'missingIndexes' => 'have different indexes in the codebase and database.'
+            'missingIndexes' => 'have different indexes in the codebase and database.',
+            'missingForeignKeys' => 'missing foreign key constraints in the database.',
+            'changedForeignKeys' => 'foreign key constraints differ from the codebase.'
         ];
 
         foreach ($changeFieldNames as $changeFieldName => $message) {

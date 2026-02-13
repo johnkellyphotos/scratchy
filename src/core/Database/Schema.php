@@ -141,6 +141,7 @@ final class Schema
 
         $haveCols = self::readColumns($pdo, $dbName, $table);
         $haveIdx = self::readIndexes($pdo, $dbName, $table);
+        $haveFks = self::readForeignKeys($pdo, $dbName, $table);
 
         foreach ($wantCols as $name => $col) {
             if (!isset($haveCols[$name])) {
@@ -180,6 +181,35 @@ final class Schema
                     $schemaComparator->sql[] = "ALTER TABLE `$table` ADD UNIQUE KEY `$idxName` (`$col->name`);";
                 }
             }
+
+            if ($col->foreignTable && $col->foreignColumn) {
+                $fkName = self::foreignKeyName($table, $col->name);
+                $have = $haveFks[$col->name] ?? null;
+                $wantDelete = $col->onDelete ? strtoupper($col->onDelete) : null;
+                $wantUpdate = $col->onUpdate ? strtoupper($col->onUpdate) : null;
+
+                if (!$have) {
+                    $schemaComparator->missingForeignKeys[] = "FOREIGN KEY($col->name)";
+                    $schemaComparator->sql[] = self::addForeignKeySql($table, $col);
+                    continue;
+                }
+
+                $isSame =
+                    $have['ref_table'] === $col->foreignTable &&
+                    $have['ref_column'] === $col->foreignColumn &&
+                    ($wantDelete ?? 'NO ACTION') === $have['on_delete'] &&
+                    ($wantUpdate ?? 'NO ACTION') === $have['on_update'];
+
+                if (!$isSame) {
+                    $schemaComparator->changedForeignKeys[] = "FOREIGN KEY($col->name)";
+                    if (!empty($have['constraint_name'])) {
+                        $schemaComparator->sql[] = "ALTER TABLE `$table` DROP FOREIGN KEY `{$have['constraint_name']}`;";
+                    } else {
+                        $schemaComparator->sql[] = "ALTER TABLE `$table` DROP FOREIGN KEY `$fkName`;";
+                    }
+                    $schemaComparator->sql[] = self::addForeignKeySql($table, $col);
+                }
+            }
         }
 
         return $schemaComparator;
@@ -190,6 +220,7 @@ final class Schema
         $defs = [];
         $pks = [];
         $uniques = [];
+        $fks = [];
 
         foreach ($columns as $col) {
             $defs[] = self::columnSql($col);
@@ -202,9 +233,13 @@ final class Schema
                 $idxName = "uniq_{$table}_$col->name";
                 $uniques[] = "UNIQUE KEY `$idxName` (`$col->name`)";
             }
+
+            if ($col->foreignTable && $col->foreignColumn) {
+                $fks[] = self::foreignKeySql($table, $col);
+            }
         }
 
-        $all = array_merge($defs, $pks, $uniques);
+        $all = array_merge($defs, $pks, $uniques, $fks);
 
         return "CREATE TABLE IF NOT EXISTS `$table` (\n  " .
             implode(",\n  ", $all) .
@@ -265,6 +300,39 @@ final class Schema
         }
 
         return $idx;
+    }
+
+    private static function readForeignKeys(PDO $pdo, string $dbName, string $table): array
+    {
+        $stmt = $pdo->prepare(
+            "SELECT
+                kcu.COLUMN_NAME,
+                kcu.CONSTRAINT_NAME,
+                kcu.REFERENCED_TABLE_NAME,
+                kcu.REFERENCED_COLUMN_NAME,
+                rc.UPDATE_RULE,
+                rc.DELETE_RULE
+             FROM information_schema.KEY_COLUMN_USAGE kcu
+             LEFT JOIN information_schema.REFERENTIAL_CONSTRAINTS rc
+               ON rc.CONSTRAINT_SCHEMA = kcu.CONSTRAINT_SCHEMA
+              AND rc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME
+             WHERE kcu.TABLE_SCHEMA = :db
+               AND kcu.TABLE_NAME = :t
+               AND kcu.REFERENCED_TABLE_NAME IS NOT NULL"
+        );
+        $stmt->execute(['db' => $dbName, 't' => $table]);
+
+        $fks = [];
+        while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $fks[$r['COLUMN_NAME']] = [
+                'constraint_name' => (string)$r['CONSTRAINT_NAME'],
+                'ref_table' => (string)$r['REFERENCED_TABLE_NAME'],
+                'ref_column' => (string)$r['REFERENCED_COLUMN_NAME'],
+                'on_update' => strtoupper((string)($r['UPDATE_RULE'] ?? 'NO ACTION')),
+                'on_delete' => strtoupper((string)($r['DELETE_RULE'] ?? 'NO ACTION')),
+            ];
+        }
+        return $fks;
     }
 
     private static function hasUniqueOnSingleColumn(array $indexes, string $col): bool
@@ -355,6 +423,29 @@ final class Schema
         }
 
         return $t->value;
+    }
+
+    private static function foreignKeyName(string $table, string $column): string
+    {
+        return "fk_{$table}_{$column}";
+    }
+
+    private static function foreignKeySql(string $table, DatabaseColumn $col): string
+    {
+        $name = self::foreignKeyName($table, $col->name);
+        $sql = "CONSTRAINT `$name` FOREIGN KEY (`$col->name`) REFERENCES `{$col->foreignTable}` (`{$col->foreignColumn}`)";
+        if ($col->onDelete) {
+            $sql .= " ON DELETE {$col->onDelete}";
+        }
+        if ($col->onUpdate) {
+            $sql .= " ON UPDATE {$col->onUpdate}";
+        }
+        return $sql;
+    }
+
+    private static function addForeignKeySql(string $table, DatabaseColumn $col): string
+    {
+        return "ALTER TABLE `$table` ADD " . self::foreignKeySql($table, $col) . ";";
     }
 
     public static function sqlLiteral(mixed $v): string

@@ -21,6 +21,12 @@ final class SchemaComparator
     public array $missingIndexes = [];
 
     /** @var string[] */
+    public array $missingForeignKeys = [];
+
+    /** @var string[] */
+    public array $changedForeignKeys = [];
+
+    /** @var string[] */
     public array $sql = [];
 
     public function __construct(public readonly string $table)
@@ -34,6 +40,8 @@ final class SchemaComparator
             || !empty($this->missingColumns)
             || !empty($this->extraColumns)
             || !empty($this->changedColumns)
-            || !empty($this->missingIndexes);
+            || !empty($this->missingIndexes)
+            || !empty($this->missingForeignKeys)
+            || !empty($this->changedForeignKeys);
     }
 }
