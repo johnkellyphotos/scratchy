@@ -19,3 +19,5 @@ const FORBIDDEN_STATUS_CODE = 403;
 const OKAY_STATUS_CODE = 200;
 
 const MODEL_DIRECTORY = __DIR__ . '/model/';
+
+const NOTHING = "Se@-(xhb2yBy+PsoP8p'";

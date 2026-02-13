@@ -152,7 +152,7 @@ abstract class Model extends Database
         return null;
     }
 
-    public static function castToDataType(string $columnName, mixed $value): string|int|float
+    public static function castToDataType(string $columnName, mixed $value): mixed
     {
         if ($columnName === 'label') {
             return (string)$value;
@@ -239,8 +239,8 @@ abstract class Model extends Database
                 continue;
             }
 
-            $sets[] = "$column = :$column";
-            $data[":$column"] = self::castToDataType($column, $value);
+            $sets[] = "{$column} = :{$column}";
+            $data[":{$column}"] = self::castToDataType($column, $value);
         }
 
         if (count($sets) === 0) {
@@ -278,6 +278,7 @@ abstract class Model extends Database
 
             $columns[] = $column;
             $placeHolders[] = ':' . $column;
+
             $data[':' . $column] = self::castToDataType($column, $value);
         }
 

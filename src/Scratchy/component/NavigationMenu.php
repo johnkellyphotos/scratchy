@@ -61,17 +61,19 @@ class NavigationMenu extends element
     {
         return [
             ['label' => 'Home', 'href' => '/', 'icon' => ['fa-solid', 'fa-house']],
-            ['label' => 'Missing page', 'href' => '/this-url-does-not-exist/', 'icon' => ['fa-solid', 'fa-newspaper']],
             [
-                'label' => 'Tools',
-                'icon' => ['fa-solid', 'fa-user'],
+                'label' => 'Birthday parties',
+                'icon' => ['fa-cake', 'fa-user'],
                 'children' => [
-                    ['label' => 'Database', 'href' => '/Database/'],
-                    ['label' => 'View users', 'href' => '/Database/view-users/'],
-                    ['label' => 'View user activity', 'href' => '/Database/view-user-activity/'],
+                    ['label' => '2026', 'href' => '/Birthday-Party/year/2026/'],
+                    ['label' => '2025', 'href' => '/Birthday-Party/year/2025/'],
+                    ['label' => '2024', 'href' => '/Birthday-Party/year/2024/'],
+                    ['label' => '2023', 'href' => '/Birthday-Party/year/2023/'],
+                    ['label' => '2022', 'href' => '/Birthday-Party/year/2022/'],
+                    ['label' => '2021', 'href' => '/Birthday-Party/year/2021/'],
                 ],
             ],
-            ['label' => 'Error', 'href' => '/error/throw-an-error/', 'icon' => ['fa-solid', 'fa-circle-info']],
+            ['label' => 'Ceremony', 'href' => '/Ceremony/']
         ];
     }
 

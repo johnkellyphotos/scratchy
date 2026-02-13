@@ -6,6 +6,7 @@ enum TagType: string
 {
     case button = 'button';
     case div = 'div';
+    case aside = 'aside';
     case html = 'html';
     case form = 'form';
     case label = 'label';
@@ -18,6 +19,7 @@ enum TagType: string
     case script = 'script';
     case p = 'p';
     case dl = 'dl';
+    case source = 'source';
     case span = 'span';
     case link = 'link';
     case style = 'style';
@@ -49,4 +51,5 @@ enum TagType: string
     case body = 'body';
     case meta = 'meta';
     case title = 'title';
+    case video = 'video';
 }
