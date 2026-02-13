@@ -15,4 +15,4 @@ class meta extends Element
     {
         parent::__construct(TagType::meta, $this->id, $this->classes, $this->attributes, $this->content, false);
     }
-    }
+}
