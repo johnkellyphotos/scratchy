@@ -21,8 +21,8 @@ class UserModel extends Model
             new DatabaseColumn('username', DatabaseColumnType::VARCHAR_64, InputType::text, unique: true, isLabel: true),
             new DatabaseColumn('password', DatabaseColumnType::VARCHAR_256, InputType::password),
             new DatabaseColumn('birthday', DatabaseColumnType::DATE, InputType::date, nullable: true),
-            new DatabaseColumn('created', DatabaseColumnType::DATETIME, InputType::datetime),
-            new DatabaseColumn('lastSignIn', DatabaseColumnType::DATETIME, InputType::datetime, nullable: true),
+            new DatabaseColumn('created', DatabaseColumnType::DATETIME, InputType::none),
+            new DatabaseColumn('lastSignIn', DatabaseColumnType::DATETIME, InputType::none, nullable: true),
         ];
     }
 }

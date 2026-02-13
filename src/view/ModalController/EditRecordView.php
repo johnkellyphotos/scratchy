@@ -39,7 +39,7 @@ class EditRecordView extends Element
                         }
                         $inputForField = $record::getInputTypeForColumn($fieldNameToSave);
                         if ($inputForField === InputType::none) {
-                            throw new Exception('Attempting to edit non-editable field.');
+                            continue;
                         }
                         $record->{$fieldNameToSave} = $record::castToDataType($fieldNameToSave, $fieldValueToSave ?: null);
                     }

@@ -45,41 +45,41 @@ class EditRecord extends Element
 
             $inputType = $record->getInputTypeForColumn($key);
             if ($inputType === InputType::none) {
-                // no input? hide? show but not editable?
-            } else {
-                $group = new div(classes: ['mb-3']);
-
-                $elementId = Element::createId();
-
-                $group->append(new label(
-                    attributes: ['class' => 'form-label', 'for' => c($elementId)],
-                    content: c((string)$key)
-                ));
-
-                if ($inputType === InputType::textarea) {
-                    $group->append(new textarea(
-                        name: c($key),
-                        value: (string)($value ?? ''),
-                        id: $elementId,
-                        classes: ['form-control'],
-                        attributes: [
-                            'type' => $inputType->value,
-                        ]
-                    ));
-                } else {
-                    $group->append(new input(
-                        name: c($key),
-                        value: c($value ?? ''),
-                        id: $elementId,
-                        classes: ['form-control'],
-                        attributes: [
-                            'type' => $inputType->value,
-                        ]
-                    ));
-                }
-
-                $body->append($group);
+                continue;
             }
+
+            $group = new div(classes: ['mb-3']);
+
+            $elementId = Element::createId();
+
+            $group->append(new label(
+                attributes: ['class' => 'form-label', 'for' => c($elementId)],
+                content: c((string)$key)
+            ));
+
+            if ($inputType === InputType::textarea) {
+                $group->append(new textarea(
+                    name: c($key),
+                    value: (string)($value ?? ''),
+                    id: $elementId,
+                    classes: ['form-control'],
+                    attributes: [
+                        'type' => $inputType->value,
+                    ]
+                ));
+            } else {
+                $group->append(new input(
+                    name: c($key),
+                    value: c($value ?? ''),
+                    id: $elementId,
+                    classes: ['form-control'],
+                    attributes: [
+                        'type' => $inputType->value,
+                    ]
+                ));
+            }
+
+            $body->append($group);
         }
     }
 }
