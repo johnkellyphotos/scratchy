@@ -35,7 +35,7 @@ class Element
     public function append(Element $element): void
     {
         if (!$this->usingClosingTag) {
-            throw new Exception('You may not append an element to self-closing tags');
+            return;
         }
         $this->setDepthRecursive($element, $this->depth + 1);
         $this->childElements[] = $element;
